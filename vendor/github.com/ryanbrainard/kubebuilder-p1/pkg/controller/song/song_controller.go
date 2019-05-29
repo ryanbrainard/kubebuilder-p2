@@ -13,14 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package artist
+package song
 
 import (
 	"context"
 	"reflect"
 
-	p1musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p1/pkg/apis/music/v1alpha1"
-	p2musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p2/pkg/apis/music/v1alpha1"
+	musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p1/pkg/apis/music/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -44,7 +43,7 @@ var log = logf.Log.WithName("controller")
 * business logic.  Delete these comments after modifying this file.*
  */
 
-// Add creates a new Artist Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
+// Add creates a new Song Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
 	return add(mgr, newReconciler(mgr))
@@ -52,28 +51,28 @@ func Add(mgr manager.Manager) error {
 
 // newReconciler returns a new reconcile.Reconciler
 func newReconciler(mgr manager.Manager) reconcile.Reconciler {
-	return &ReconcileArtist{Client: mgr.GetClient(), scheme: mgr.GetScheme()}
+	return &ReconcileSong{Client: mgr.GetClient(), scheme: mgr.GetScheme()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
 func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Create a new controller
-	c, err := controller.New("artist-controller", mgr, controller.Options{Reconciler: r})
+	c, err := controller.New("song-controller", mgr, controller.Options{Reconciler: r})
 	if err != nil {
 		return err
 	}
 
-	// Watch for changes to Artist
-	err = c.Watch(&source.Kind{Type: &p2musicv1alpha1.Artist{}}, &handler.EnqueueRequestForObject{})
+	// Watch for changes to Song
+	err = c.Watch(&source.Kind{Type: &musicv1alpha1.Song{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
 
 	// TODO(user): Modify this to be the types you create
-	// Uncomment watch a Deployment created by Artist - change this for objects you create
+	// Uncomment watch a Deployment created by Song - change this for objects you create
 	err = c.Watch(&source.Kind{Type: &appsv1.Deployment{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &p2musicv1alpha1.Artist{},
+		OwnerType:    &musicv1alpha1.Song{},
 	})
 	if err != nil {
 		return err
@@ -82,30 +81,26 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	return nil
 }
 
-var _ reconcile.Reconciler = &ReconcileArtist{}
+var _ reconcile.Reconciler = &ReconcileSong{}
 
-// ReconcileArtist reconciles a Artist object
-type ReconcileArtist struct {
+// ReconcileSong reconciles a Song object
+type ReconcileSong struct {
 	client.Client
 	scheme *runtime.Scheme
 }
 
-// Reconcile reads that state of the cluster for a Artist object and makes changes based on the state read
-// and what is in the Artist.Spec
+// Reconcile reads that state of the cluster for a Song object and makes changes based on the state read
+// and what is in the Song.Spec
 // TODO(user): Modify this Reconcile function to implement your Controller logic.  The scaffolding writes
 // a Deployment as an example
 // Automatically generate RBAC rules to allow the Controller to read and write Deployments
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=deployments/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=music.p2.example.com,resources=artists,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=music.p2.example.com,resources=artists/status,verbs=get;update;patch
-func (r *ReconcileArtist) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	if err := r.Create(context.TODO(), &p1musicv1alpha1.Song{}); err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Fetch the Artist instance
-	instance := &p2musicv1alpha1.Artist{}
+// +kubebuilder:rbac:groups=music.p1.example.com,resources=songs,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=music.p1.example.com,resources=songs/status,verbs=get;update;patch
+func (r *ReconcileSong) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+	// Fetch the Song instance
+	instance := &musicv1alpha1.Song{}
 	err := r.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
