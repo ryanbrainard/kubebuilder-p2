@@ -100,8 +100,12 @@ type ReconcileArtist struct {
 // +kubebuilder:rbac:groups=music.p2.example.com,resources=artists,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=music.p2.example.com,resources=artists/status,verbs=get;update;patch
 func (r *ReconcileArtist) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	if err := r.Create(context.TODO(), &p1musicv1alpha1.Song{}); err != nil {
-		return reconcile.Result{}, err
+	// getting a Song to make sure we have our scheme set up correctly
+	song := &p1musicv1alpha1.Song{}
+	if err := r.Get(context.TODO(), types.NamespacedName{Name: request.Name, Namespace: request.Namespace}, song); err != nil {
+		if !errors.IsNotFound(err) {
+			panic(err) // just blow up for testing purpose
+		}
 	}
 
 	// Fetch the Artist instance

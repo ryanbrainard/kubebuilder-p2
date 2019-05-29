@@ -35,7 +35,10 @@ var cfg *rest.Config
 
 func TestMain(m *testing.M) {
 	t := &envtest.Environment{
-		CRDDirectoryPaths: []string{filepath.Join("..", "..", "..", "config", "crds")},
+		CRDDirectoryPaths: []string{
+			filepath.Join("..", "..", "..", "config", "crds"),
+			filepath.Join("..", "..", "..", "vendor", "github.com", "ryanbrainard", "kubebuilder-p1", "config", "crds"),
+		},
 	}
 	apis.AddToScheme(scheme.Scheme)
 

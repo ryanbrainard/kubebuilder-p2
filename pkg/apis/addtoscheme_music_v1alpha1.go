@@ -16,10 +16,16 @@ limitations under the License.
 package apis
 
 import (
-	"github.com/ryanbrainard/kubebuilder-p2/pkg/apis/music/v1alpha1"
+	p1musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p1/pkg/apis/music/v1alpha1"
+	p2musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p2/pkg/apis/music/v1alpha1"
 )
 
 func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
-	AddToSchemes = append(AddToSchemes, v1alpha1.SchemeBuilder.AddToScheme)
+	AddToSchemes = append(
+		AddToSchemes,
+		p1musicv1alpha1.SchemeBuilder.AddToScheme,
+		p2musicv1alpha1.SchemeBuilder.AddToScheme,
+	)
+
 }
