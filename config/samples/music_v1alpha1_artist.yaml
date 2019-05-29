@@ -1,0 +1,9 @@
+apiVersion: music.p2.example.com/v1alpha1
+kind: Artist
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: artist-sample
+spec:
+  # Add fields here
+  foo: bar
