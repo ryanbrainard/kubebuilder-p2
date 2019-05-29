@@ -19,7 +19,8 @@ import (
 	"context"
 	"reflect"
 
-	musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p2/pkg/apis/music/v1alpha1"
+	p1musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p1/pkg/apis/music/v1alpha1"
+	p2musicv1alpha1 "github.com/ryanbrainard/kubebuilder-p2/pkg/apis/music/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -35,6 +36,8 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
+
+var _ p1musicv1alpha1.Song
 
 var log = logf.Log.WithName("controller")
 
@@ -63,7 +66,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	}
 
 	// Watch for changes to Artist
-	err = c.Watch(&source.Kind{Type: &musicv1alpha1.Artist{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: &p2musicv1alpha1.Artist{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
@@ -72,7 +75,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	// Uncomment watch a Deployment created by Artist - change this for objects you create
 	err = c.Watch(&source.Kind{Type: &appsv1.Deployment{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
-		OwnerType:    &musicv1alpha1.Artist{},
+		OwnerType:    &p2musicv1alpha1.Artist{},
 	})
 	if err != nil {
 		return err
@@ -100,7 +103,7 @@ type ReconcileArtist struct {
 // +kubebuilder:rbac:groups=music.p2.example.com,resources=artists/status,verbs=get;update;patch
 func (r *ReconcileArtist) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	// Fetch the Artist instance
-	instance := &musicv1alpha1.Artist{}
+	instance := &p2musicv1alpha1.Artist{}
 	err := r.Get(context.TODO(), request.NamespacedName, instance)
 	if err != nil {
 		if errors.IsNotFound(err) {
