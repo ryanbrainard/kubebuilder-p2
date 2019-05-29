@@ -1,0 +1,3 @@
+version: "1"
+domain: p2.example.com
+repo: github.com/ryanbrainard/kubebuilder-p2
